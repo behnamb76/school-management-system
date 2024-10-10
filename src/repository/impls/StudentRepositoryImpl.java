@@ -20,7 +20,7 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     private static final String GET_STUDENTS_BY_NAME_QUERY = "SELECT * FROM students WHERE first_name = ?";
     private static final String ADD_STUDENT_QUERY = "INSERT INTO students(first_name, last_name, dob, national_code, gpu) VALUES(?,?,?,?,?)";
-    private static final String UPDATE_STUDENT_QUERY = "UPDATE students SET first_name = ?, last_name = ?, dob = ?, national_code = ? gpu = ? WHERE student_id = ?";
+    private static final String UPDATE_STUDENT_QUERY = "UPDATE students SET first_name = ?, last_name = ?, dob = ?, national_code = ?, gpu = ? WHERE student_id = ?";
     private static final String DELETE_STUDENT_QUERY = "DELETE FROM students WHERE student_id = ?";
 
     private final Database database = ApplicationContext.getDatabase();
