@@ -19,6 +19,9 @@ public class StudentRepositoryImpl implements StudentRepository {
     private static final String GET_COUNT_OF_STUDENTS = "SELECT count(*) FROM students";
 
     private static final String GET_STUDENTS_BY_NAME_QUERY = "SELECT * FROM students WHERE first_name = ?";
+    private static final String ADD_STUDENT_QUERY = "INSERT INTO students(first_name, last_name, dob, national_code, gpu) VALUES(?,?,?,?,?)";
+    private static final String UPDATE_STUDENT_QUERY = "UPDATE students SET first_name = ?, last_name = ?, dob = ?, national_code = ? gpu = ? WHERE student_id = ?";
+    private static final String DELETE_STUDENT_QUERY = "DELETE FROM students WHERE student_id = ?";
 
     private final Database database = ApplicationContext.getDatabase();
 
@@ -65,5 +68,35 @@ public class StudentRepositoryImpl implements StudentRepository {
             students.add(student);
         }
         return students;
+    }
+
+    @Override
+    public void addStudent(Student student) throws Exception {
+        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(ADD_STUDENT_QUERY);
+        preparedStatement.setString(1, student.getFirstName());
+        preparedStatement.setString(2, student.getLastName());
+        preparedStatement.setDate(3, student.getDob());
+        preparedStatement.setString(4, student.getNationalCode());
+        preparedStatement.setDouble(5, student.getGpu());
+        preparedStatement.executeUpdate();
+    }
+
+    @Override
+    public void updateStudent(Student student) throws Exception {
+        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(UPDATE_STUDENT_QUERY);
+        preparedStatement.setString(1, student.getFirstName());
+        preparedStatement.setString(2, student.getLastName());
+        preparedStatement.setDate(3, student.getDob());
+        preparedStatement.setString(4, student.getNationalCode());
+        preparedStatement.setDouble(5, student.getGpu());
+        preparedStatement.setLong(6, student.getStudentId());
+        preparedStatement.executeUpdate();
+    }
+
+    @Override
+    public void deleteStudent(long studentId) throws Exception {
+        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(DELETE_STUDENT_QUERY);
+        preparedStatement.setLong(1, studentId);
+        preparedStatement.executeUpdate();
     }
 }
