@@ -1,5 +1,7 @@
 package repository.impls;
 
+import exception.NotFoundException;
+import model.Student;
 import model.Teacher;
 import repository.TeacherRepository;
 import util.ApplicationContext;
@@ -10,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class TeacherRepositoryImpl implements TeacherRepository {
@@ -19,6 +22,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
     private static final String ADD_TEACHER_QUERY = "INSERT INTO teachers(first_name, last_name, dob, national_code) VALUES(?,?,?,?)";
     private static final String UPDATE_TEACHER_QUERY = "UPDATE teachers SET first_name = ?, last_name = ?, dob = ?, national_code = ? WHERE teacher_id = ?";
     private static final String DELETE_TEACHER_QUERY = "DELETE FROM teachers WHERE teacher_id = ?";
+    private static final String FIND_TEACHER_BY_ID = "SELECT * FROM teachers WHERE teacher_id = ?";
 
     @Override
     public Set<Teacher> getAllTeachers() throws SQLException {
@@ -76,9 +80,31 @@ public class TeacherRepositoryImpl implements TeacherRepository {
     }
 
     @Override
-    public void deleteTeacher(long teacherId) throws SQLException {
-        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(DELETE_TEACHER_QUERY);
-        preparedStatement.setLong(1, teacherId);
-        preparedStatement.executeUpdate();
+    public void deleteTeacher(long teacherId) throws SQLException, NotFoundException {
+        if (this.findById(teacherId).isPresent()) {
+            PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(DELETE_TEACHER_QUERY);
+            preparedStatement.setLong(1, teacherId);
+            preparedStatement.executeUpdate();
+        } else {
+            throw new NotFoundException("Teacher with id of ".concat(String.valueOf(teacherId)).concat(" not found!"));
+        }
+    }
+
+    @Override
+    public Optional<Teacher> findById(Long teacherId) throws SQLException {
+        PreparedStatement ps = database.getPreparedStatement(FIND_TEACHER_BY_ID);
+        ps.setLong(1, teacherId);
+        ResultSet rs = ps.executeQuery();
+        Optional<Teacher> optionalStudent = Optional.empty();
+        while (rs.next()) {
+            Teacher teacher =  new Teacher();
+            teacher.setTeacherId(rs.getLong("teacher_id"));
+            teacher.setFirstName(rs.getString("first_name"));
+            teacher.setLastName(rs.getString("last_name"));
+            teacher.setDob(rs.getDate("dob"));
+            teacher.setNationalCode(rs.getString("national_code"));
+            optionalStudent = Optional.of(teacher);
+        }
+        return optionalStudent;
     }
 }

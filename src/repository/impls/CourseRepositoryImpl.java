@@ -1,6 +1,8 @@
 package repository.impls;
 
+import exception.NotFoundException;
 import model.Course;
+import model.Exam;
 import repository.CourseRepository;
 import util.ApplicationContext;
 import util.Database;
@@ -9,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class CourseRepositoryImpl implements CourseRepository {
@@ -18,6 +21,7 @@ public class CourseRepositoryImpl implements CourseRepository {
     private static final String ADD_COURSE_QUERY = "INSERT INTO courses(course_title, course_unit) VALUES(?,?)";
     private static final String UPDATE_COURSE_QUERY = "UPDATE courses SET course_title = ?, course_unit = ? WHERE course_id = ?";
     private static final String DELETE_COURSE_QUERY = "DELETE FROM courses WHERE course_id = ?";
+    private static final String FIND_COURSE_BY_ID = "SELECT * FROM courses WHERE course_id = ?";
 
     @Override
     public Set<Course> getAllCourse() throws SQLException {
@@ -25,7 +29,7 @@ public class CourseRepositoryImpl implements CourseRepository {
         Set<Course> courses = new HashSet<>();
         while (coursesResult.next()) {
             Course course = new Course(
-                    coursesResult.getLong("teacher_id"),
+                    coursesResult.getLong("course_id"),
                     coursesResult.getString("title"),
                     coursesResult.getInt("unit")
             );
@@ -41,7 +45,7 @@ public class CourseRepositoryImpl implements CourseRepository {
         ResultSet courseResult = preparedStatement.executeQuery();
         if (courseResult.next()) {
             return new Course(
-                    courseResult.getLong("teacher_id"),
+                    courseResult.getLong("course_id"),
                     courseResult.getString("title"),
                     courseResult.getInt("unit")
             );
@@ -67,9 +71,28 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public void deleteCourse(long courseId) throws SQLException {
-        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(DELETE_COURSE_QUERY);
-        preparedStatement.setLong(1, courseId);
-        preparedStatement.executeUpdate();
+    public void deleteCourse(long courseId) throws SQLException, NotFoundException {
+        if (this.findById(courseId).isPresent()) {
+            PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(DELETE_COURSE_QUERY);
+            preparedStatement.setLong(1, courseId);
+            preparedStatement.executeUpdate();
+        } else {
+            throw new NotFoundException("Course with id of ".concat(String.valueOf(courseId)).concat(" not found!"));
+        }
+    }
+
+    public Optional<Course> findById(Long courseId) throws SQLException {
+        PreparedStatement ps = database.getPreparedStatement(FIND_COURSE_BY_ID);
+        ps.setLong(1, courseId);
+        ResultSet rs = ps.executeQuery();
+        Optional<Course> optionalStudent = Optional.empty();
+        while (rs.next()) {
+            Course course = new Course();
+            course.setCourseId(rs.getLong("exam_id"));
+            course.setTitle(rs.getString("title"));
+            course.setUnit(rs.getInt("unit"));
+            optionalStudent = Optional.of(course);
+        }
+        return optionalStudent;
     }
 }
