@@ -18,7 +18,6 @@ import java.util.Set;
 public class TeacherRepositoryImpl implements TeacherRepository {
     private final Database database = ApplicationContext.getDatabase();
     private static final String GET_ALL_TEACHERS_QUERY = "SELECT * FROM students";
-    private static final String GET_TEACHER_BY_ID_QUERY = "SELECT * FROM teachers WHERE teacher_id = ?";
     private static final String ADD_TEACHER_QUERY = "INSERT INTO teachers(first_name, last_name, dob, national_code) VALUES(?,?,?,?)";
     private static final String UPDATE_TEACHER_QUERY = "UPDATE teachers SET first_name = ?, last_name = ?, dob = ?, national_code = ? WHERE teacher_id = ?";
     private static final String DELETE_TEACHER_QUERY = "DELETE FROM teachers WHERE teacher_id = ?";
@@ -39,23 +38,6 @@ public class TeacherRepositoryImpl implements TeacherRepository {
             teachers.add(teacher);
         }
         return teachers;
-    }
-
-    @Override
-    public Teacher getTeacherById(long teacherId) throws SQLException {
-        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(GET_TEACHER_BY_ID_QUERY);
-        preparedStatement.setLong(1, teacherId);
-        ResultSet teacherResult = preparedStatement.executeQuery();
-        if (teacherResult.next()) {
-            return new Teacher(
-                    teacherResult.getLong("teacher_id"),
-                    teacherResult.getString("first_name"),
-                    teacherResult.getString("last_name"),
-                    teacherResult.getDate("dob"),
-                    teacherResult.getString("national_code")
-            );
-        }
-        return null;
     }
 
     @Override
@@ -91,8 +73,8 @@ public class TeacherRepositoryImpl implements TeacherRepository {
     }
 
     @Override
-    public Optional<Teacher> findById(Long teacherId) throws SQLException {
-        PreparedStatement ps = database.getPreparedStatement(FIND_TEACHER_BY_ID);
+    public Optional<Teacher> findById(long teacherId) throws SQLException {
+        PreparedStatement ps = database.getDatabaseConnection().prepareStatement(FIND_TEACHER_BY_ID);
         ps.setLong(1, teacherId);
         ResultSet rs = ps.executeQuery();
         Optional<Teacher> optionalStudent = Optional.empty();

@@ -9,9 +9,8 @@ import java.util.Set;
 
 public interface ExamRepository {
     Set<Exam> getAllExams() throws Exception;
-    Exam getExamById(long examId) throws Exception;
     void addExam(Exam exam) throws Exception;
     void updateExam(Exam exam)  throws Exception;
     void deleteExam(long examId) throws Exception, NotFoundException;
-    Optional<Exam> findById(Long examId) throws SQLException;
+    Optional<Exam> findById(long examId) throws SQLException;
 }

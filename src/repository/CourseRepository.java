@@ -9,9 +9,8 @@ import java.util.Set;
 
 public interface CourseRepository {
     Set<Course> getAllCourse() throws SQLException;
-    Course getCourseById(long courseId) throws SQLException;
     void addCourse(Course course) throws SQLException;
     void updateCourse(Course course) throws SQLException;
     void deleteCourse(long courseId) throws SQLException, NotFoundException;
-    public Optional<Course> findById(Long courseId) throws SQLException;
+    Optional<Course> findById(long courseId) throws SQLException;
 }

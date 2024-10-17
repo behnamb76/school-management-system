@@ -18,5 +18,5 @@ public interface StudentRepository {
     void addStudent(Student student) throws Exception;
     void updateStudent(Student student)  throws Exception;
     void deleteStudent(long studentId) throws Exception, NotFoundException;
-    Optional<Student> findById(Long studentId) throws SQLException;
+    Optional<Student> findById(long studentId) throws SQLException;
 }

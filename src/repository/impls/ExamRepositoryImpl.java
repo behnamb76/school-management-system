@@ -18,7 +18,6 @@ import java.util.Set;
 public class ExamRepositoryImpl implements ExamRepository {
     private final Database database = ApplicationContext.getDatabase();
     private static final String GET_ALL_EXAMS_QUERY = "SELECT * FROM exams";
-    private static final String GET_EXAM_BY_ID_QUERY = "SELECT * FROM exams WHERE exam_id = ?";
     private static final String ADD_EXAM_QUERY = "INSERT INTO exams(date, grade) VALUES(?,?)";
     private static final String UPDATE_EXAM_QUERY = "UPDATE exams SET date = ?, grade = ? WHERE exam_id = ?";
     private static final String DELETE_EXAM_QUERY = "DELETE FROM exams WHERE exam_id = ?";
@@ -37,21 +36,6 @@ public class ExamRepositoryImpl implements ExamRepository {
             exams.add(exam);
         }
         return exams;
-    }
-
-    @Override
-    public Exam getExamById(long examId) throws SQLException{
-        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(GET_EXAM_BY_ID_QUERY);
-        preparedStatement.setLong(1, examId);
-        ResultSet examResult = preparedStatement.executeQuery();
-        if (examResult.next()) {
-            return new Exam(
-                    examResult.getLong("exam_id"),
-                    examResult.getDate("date"),
-                    examResult.getDouble("grade")
-            );
-        }
-        return null;
     }
 
     @Override
@@ -83,8 +67,8 @@ public class ExamRepositoryImpl implements ExamRepository {
     }
 
     @Override
-    public Optional<Exam> findById(Long examId) throws SQLException{
-        PreparedStatement ps = database.getPreparedStatement(FIND_EXAM_BY_ID);
+    public Optional<Exam> findById(long examId) throws SQLException{
+        PreparedStatement ps = database.getDatabaseConnection().prepareStatement(FIND_EXAM_BY_ID);
         ps.setLong(1, examId);
         ResultSet rs = ps.executeQuery();
         Optional<Exam> optionalStudent = Optional.empty();

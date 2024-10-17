@@ -17,7 +17,6 @@ import java.util.Set;
 public class CourseRepositoryImpl implements CourseRepository {
     private final Database database = ApplicationContext.getDatabase();
     private static final String GET_ALL_COURSES_QUERY = "SELECT * FROM courses";
-    private static final String GET_COURSE_BY_ID_QUERY = "SELECT * FROM courses WHERE course_id = ?";
     private static final String ADD_COURSE_QUERY = "INSERT INTO courses(course_title, course_unit) VALUES(?,?)";
     private static final String UPDATE_COURSE_QUERY = "UPDATE courses SET course_title = ?, course_unit = ? WHERE course_id = ?";
     private static final String DELETE_COURSE_QUERY = "DELETE FROM courses WHERE course_id = ?";
@@ -36,21 +35,6 @@ public class CourseRepositoryImpl implements CourseRepository {
             courses.add(course);
         }
         return courses;
-    }
-
-    @Override
-    public Course getCourseById(long courseId) throws SQLException {
-        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(GET_COURSE_BY_ID_QUERY);
-        preparedStatement.setLong(1, courseId);
-        ResultSet courseResult = preparedStatement.executeQuery();
-        if (courseResult.next()) {
-            return new Course(
-                    courseResult.getLong("course_id"),
-                    courseResult.getString("title"),
-                    courseResult.getInt("unit")
-            );
-        }
-        return null;
     }
 
     @Override
@@ -82,8 +66,8 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public Optional<Course> findById(Long courseId) throws SQLException {
-        PreparedStatement ps = database.getPreparedStatement(FIND_COURSE_BY_ID);
+    public Optional<Course> findById(long courseId) throws SQLException {
+        PreparedStatement ps = database.getDatabaseConnection().prepareStatement(FIND_COURSE_BY_ID);
         ps.setLong(1, courseId);
         ResultSet rs = ps.executeQuery();
         Optional<Course> optionalStudent = Optional.empty();

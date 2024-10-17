@@ -10,9 +10,8 @@ import java.util.Set;
 
 public interface TeacherRepository {
     Set<Teacher> getAllTeachers() throws SQLException;
-    Teacher getTeacherById(long teacherId) throws SQLException;
     void addTeacher(Teacher teacher) throws SQLException;
     void updateTeacher(Teacher teacher) throws SQLException;
     void deleteTeacher(long teacherId) throws SQLException, NotFoundException;
-    Optional<Teacher> findById(Long teacherId) throws SQLException;
+    Optional<Teacher> findById(long teacherId) throws SQLException;
 }
