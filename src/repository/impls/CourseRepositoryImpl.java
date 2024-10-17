@@ -81,6 +81,7 @@ public class CourseRepositoryImpl implements CourseRepository {
         }
     }
 
+    @Override
     public Optional<Course> findById(Long courseId) throws SQLException {
         PreparedStatement ps = database.getPreparedStatement(FIND_COURSE_BY_ID);
         ps.setLong(1, courseId);

@@ -108,6 +108,7 @@ public class StudentRepositoryImpl implements StudentRepository {
         }
     }
 
+    @Override
     public Optional<Student> findById(Long studentId) throws SQLException{
         PreparedStatement ps = database.getPreparedStatement(FIND_STUDENT_BY_ID);
         ps.setLong(1, studentId);

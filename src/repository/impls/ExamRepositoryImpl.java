@@ -82,6 +82,7 @@ public class ExamRepositoryImpl implements ExamRepository {
         }
     }
 
+    @Override
     public Optional<Exam> findById(Long examId) throws SQLException{
         PreparedStatement ps = database.getPreparedStatement(FIND_EXAM_BY_ID);
         ps.setLong(1, examId);
