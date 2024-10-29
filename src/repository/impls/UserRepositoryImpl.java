@@ -20,7 +20,7 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String UPDATE_USER_QUERY = "UPDATE users SET username = ?, password = ?, role = ? WHERE user_id = ?";
     private static final String DELETE_USER_QUERY = "DELETE FROM users WHERE user_id = ?";
     private static final String FIND_USER_BY_ID = "SELECT * FROM users WHERE user_id = ?";
-    private static final String FIND_USER_BY_NATIONAL_CODE = "SELECT * FROM users WHERE national_code = ?";
+    private static final String FIND_USER_BY_NATIONAL_CODE = "SELECT * FROM users WHERE username = ?";
 
     @Override
     public Optional<User> findByUsernameAndPassword(String username, String password) throws SQLException{

@@ -29,13 +29,13 @@ public class StudentRepositoryImpl implements StudentRepository {
         ResultSet studentsResult = Database.getSQLStatement().executeQuery(GET_ALL_STUDENTS_QUERY);
         Set<Student> students = new HashSet<>();
         while (studentsResult.next()) {
-            String nc;
+            String nc = studentsResult.getString("national_code");
             Student student = new Student(
                     studentsResult.getLong("student_id"),
                     studentsResult.getString("first_name"),
                     studentsResult.getString("last_name"),
                     studentsResult.getDate("dob"),
-                    nc = studentsResult.getString("national_code"),
+                    studentsResult.getString("national_code"),
                     studentsResult.getDouble("gpu"),
                     userRepository.findByNationalCode(nc).get()
             );
