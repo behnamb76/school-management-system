@@ -1,30 +1,34 @@
 package model;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Teacher {
-    private long teacherId;
+    private Long teacherId;
     private String firstName;
     private String lastName;
     private Date dob;
     private String nationalCode;
+    private Long courseId;
+    private User user;
 
     public Teacher() {
     }
 
-    public Teacher(long teacherId, String firstName, String lastName, Date dob, String nationalCode) {
+    public Teacher(Long teacherId, String firstName, String lastName, Date dob, String nationalCode, Long courseId, User user) {
         this.teacherId = teacherId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
         this.nationalCode = nationalCode;
+        this.courseId = courseId;
+        this.user = user;
     }
 
-    public long getTeacherId() {
+    public Long getTeacherId() {
         return teacherId;
     }
 
-    public void setTeacherId(long teacherId) {
+    public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
     }
 
@@ -58,6 +62,22 @@ public class Teacher {
 
     public void setNationalCode(String nationalCode) {
         this.nationalCode = nationalCode;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

@@ -3,7 +3,6 @@ package repository.impls;
 import exception.NotFoundException;
 import model.Student;
 import repository.StudentRepository;
-import util.ApplicationContext;
 import util.Database;
 
 import java.sql.PreparedStatement;
@@ -22,48 +21,23 @@ public class StudentRepositoryImpl implements StudentRepository {
     private static final String DELETE_STUDENT_FROM_COURSES_STUDENTS_QUERY = "DELETE FROM courses_students WHERE student_id = ?";
     private static final String DELETE_STUDENT_QUERY = "DELETE FROM students WHERE student_id = ?";
     private static final String FIND_STUDENT_BY_ID = "SELECT * FROM students WHERE student_id = ?";
+    private final UserRepositoryImpl userRepository = new UserRepositoryImpl();
 
-    private final Database database = ApplicationContext.getDatabase();
 
-    public Set<Student> getAllStudents() throws SQLException {
-        ResultSet studentsResult = database.getSQLStatement().executeQuery(GET_ALL_STUDENTS_QUERY);
+    @Override
+    public Set<Student> findAll() throws SQLException {
+        ResultSet studentsResult = Database.getSQLStatement().executeQuery(GET_ALL_STUDENTS_QUERY);
         Set<Student> students = new HashSet<>();
         while (studentsResult.next()) {
+            String nc;
             Student student = new Student(
                     studentsResult.getLong("student_id"),
                     studentsResult.getString("first_name"),
                     studentsResult.getString("last_name"),
                     studentsResult.getDate("dob"),
-                    studentsResult.getString("national_code"),
-                    studentsResult.getDouble("gpu")
-            );
-            students.add(student);
-        }
-        return students;
-    }
-
-    public int getCountOfStudents() throws SQLException {
-        ResultSet countResult = database.getSQLStatement().executeQuery(GET_COUNT_OF_STUDENTS);
-        int studentCount = 0;
-        while (countResult.next()) {
-            studentCount = countResult.getInt("count");
-        }
-        return studentCount;
-    }
-
-    public List<Student> getStudentsByName(String firstName) throws SQLException {
-        List<Student> students = new ArrayList<>();
-        PreparedStatement smt = database.getDatabaseConnection().prepareStatement(GET_STUDENTS_BY_NAME_QUERY);
-        smt.setString(1, firstName);
-        ResultSet rs = smt.executeQuery();
-        while (rs.next()) {
-            Student student = new Student(
-                    rs.getLong("student_id"),
-                    rs.getString("first_name"),
-                    rs.getString("last_name"),
-                    rs.getDate("dob"),
-                    rs.getString("national_code"),
-                    rs.getDouble("gpu")
+                    nc = studentsResult.getString("national_code"),
+                    studentsResult.getDouble("gpu"),
+                    userRepository.findByNationalCode(nc).get()
             );
             students.add(student);
         }
@@ -71,8 +45,8 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public void addStudent(Student student) throws SQLException {
-        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(ADD_STUDENT_QUERY);
+    public void add(Student student) throws SQLException {
+        PreparedStatement preparedStatement = Database.getPreparedStatement(ADD_STUDENT_QUERY);
         preparedStatement.setString(1, student.getFirstName());
         preparedStatement.setString(2, student.getLastName());
         preparedStatement.setDate(3, student.getDob());
@@ -82,8 +56,8 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public void updateStudent(Student student) throws SQLException {
-        PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(UPDATE_STUDENT_QUERY);
+    public void update(Student student) throws SQLException {
+        PreparedStatement preparedStatement = Database.getPreparedStatement(UPDATE_STUDENT_QUERY);
         preparedStatement.setString(1, student.getFirstName());
         preparedStatement.setString(2, student.getLastName());
         preparedStatement.setDate(3, student.getDob());
@@ -94,13 +68,13 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public void deleteStudent(long studentId) throws SQLException, NotFoundException {
+    public void delete(Long studentId) throws SQLException, NotFoundException {
         if (this.findById(studentId).isPresent()) {
-            PreparedStatement preparedStatement = database.getDatabaseConnection().prepareStatement(DELETE_STUDENT_QUERY);
+            PreparedStatement preparedStatement = Database.getPreparedStatement(DELETE_STUDENT_FROM_COURSES_STUDENTS_QUERY);
             preparedStatement.setLong(1, studentId);
             preparedStatement.executeUpdate();
 
-            preparedStatement = database.getDatabaseConnection().prepareStatement(DELETE_STUDENT_FROM_COURSES_STUDENTS_QUERY);
+            preparedStatement = Database.getPreparedStatement(DELETE_STUDENT_QUERY);
             preparedStatement.setLong(1, studentId);
             preparedStatement.executeUpdate();
         } else {
@@ -109,8 +83,8 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public Optional<Student> findById(long studentId) throws SQLException{
-        PreparedStatement ps = database.getDatabaseConnection().prepareStatement(FIND_STUDENT_BY_ID);
+    public Optional<Student> findById(Long studentId) throws SQLException{
+        PreparedStatement ps = Database.getPreparedStatement(FIND_STUDENT_BY_ID);
         ps.setLong(1, studentId);
         ResultSet rs = ps.executeQuery();
         Optional<Student> optionalStudent = Optional.empty();
@@ -125,5 +99,34 @@ public class StudentRepositoryImpl implements StudentRepository {
             optionalStudent = Optional.of(student);
         }
         return optionalStudent;
+    }
+
+    @Override
+    public int getCountOfStudents() throws SQLException {
+        ResultSet countResult = Database.getSQLStatement().executeQuery(GET_COUNT_OF_STUDENTS);
+        int studentCount = 0;
+        while (countResult.next()) {
+            studentCount = countResult.getInt("count");
+        }
+        return studentCount;
+    }
+
+    @Override
+    public List<Student> getStudentsByName(String firstName) throws SQLException {
+        List<Student> students = new ArrayList<>();
+        PreparedStatement smt = Database.getPreparedStatement(GET_STUDENTS_BY_NAME_QUERY);
+        smt.setString(1, firstName);
+        ResultSet rs = smt.executeQuery();
+        while (rs.next()) {
+            Student student =  new Student();
+            student.setStudentId(rs.getLong("student_id"));
+            student.setFirstName(rs.getString("first_name"));
+            student.setLastName(rs.getString("last_name"));
+            student.setDob(rs.getDate("dob"));
+            student.setNationalCode(rs.getString("national_code"));
+            student.setGpu(rs.getDouble("gpu"));
+            students.add(student);
+        }
+        return students;
     }
 }

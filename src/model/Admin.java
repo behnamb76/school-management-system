@@ -2,34 +2,32 @@ package model;
 
 import java.sql.Date;
 
-public class Student {
-    private Long studentId;
+public class Admin {
+    private Long adminId;
     private String firstName;
     private String lastName;
     private Date dob;
     private String nationalCode;
-    private Double gpu;
     private User user;
 
-    public Student() {
+    public Admin() {
     }
 
-    public Student(Long studentId, String firstName, String lastName, Date dob, String nationalCode, Double gpu, User user) {
-        this.studentId = studentId;
+    public Admin(Long adminId, String firstName, String lastName, Date dob, String nationalCode, User user) {
+        this.adminId = adminId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.dob = dob;
         this.nationalCode = nationalCode;
-        this.gpu = gpu;
         this.user = user;
     }
 
-    public Long getStudentId() {
-        return studentId;
+    public Long getAdminId() {
+        return adminId;
     }
 
-    public void setStudentId(Long studentId) {
-        this.studentId = studentId;
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
     }
 
     public String getFirstName() {
@@ -64,14 +62,6 @@ public class Student {
         this.nationalCode = nationalCode;
     }
 
-    public Double getGpu() {
-        return gpu;
-    }
-
-    public void setGpu(Double gpu) {
-        this.gpu = gpu;
-    }
-
     public User getUser() {
         return user;
     }
@@ -82,13 +72,12 @@ public class Student {
 
     @Override
     public String toString() {
-        return "Student{" +
-                "studentId=" + studentId +
+        return "Admin{" +
+                "adminId=" + adminId +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", dob=" + dob +
                 ", nationalCode='" + nationalCode + '\'' +
-                ", gpu=" + gpu +
                 '}';
     }
 }

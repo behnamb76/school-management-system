@@ -1,24 +1,24 @@
 package model;
 
 public class Course {
-    private long courseId;
+    private Long courseId;
     private String title;
-    private int unit;
+    private Integer unit;
 
     public Course() {
     }
 
-    public Course(long courseId, String title, int unit) {
+    public Course(Long courseId, String title, Integer unit) {
         this.courseId = courseId;
         this.title = title;
         this.unit = unit;
     }
 
-    public long getCourseId() {
+    public Long getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(long courseId) {
+    public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
 
@@ -30,11 +30,11 @@ public class Course {
         this.title = title;
     }
 
-    public int getUnit() {
+    public Integer getUnit() {
         return unit;
     }
 
-    public void setUnit(int unit) {
+    public void setUnit(Integer unit) {
         this.unit = unit;
     }
 
