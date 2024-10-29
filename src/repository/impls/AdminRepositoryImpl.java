@@ -28,13 +28,13 @@ public class AdminRepositoryImpl implements AdminRepository {
         ResultSet adminsResult = Database.getSQLStatement().executeQuery(GET_ALL_ADMINS_QUERY);
         Set<Admin> admins = new HashSet<>();
         while (adminsResult.next()) {
-            String nc;
+            String nc = adminsResult.getString("national_code");
             Admin admin = new Admin(
                     adminsResult.getLong("admin_id"),
                     adminsResult.getString("first_name"),
                     adminsResult.getString("last_name"),
                     adminsResult.getDate("dob"),
-                    nc = adminsResult.getString("national_code"),
+                    adminsResult.getString("national_code"),
                     userRepository.findByNationalCode(nc).get()
             );
             admins.add(admin);

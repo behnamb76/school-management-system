@@ -29,13 +29,13 @@ public class TeacherRepositoryImpl implements TeacherRepository {
         ResultSet teachersResult = Database.getSQLStatement().executeQuery(GET_ALL_TEACHERS_QUERY);
         Set<Teacher> teachers = new HashSet<>();
         while (teachersResult.next()) {
-            String nc;
+            String nc = teachersResult.getString("national_code");
             Teacher teacher = new Teacher(
                     teachersResult.getLong("teacher_id"),
                     teachersResult.getString("first_name"),
                     teachersResult.getString("last_name"),
                     teachersResult.getDate("dob"),
-                    nc = teachersResult.getString("national_code"),
+                    teachersResult.getString("national_code"),
                     teachersResult.getLong("course_id"),
                     userRepository.findByNationalCode(nc).get()
             );
@@ -49,7 +49,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
         PreparedStatement preparedStatement = Database.getPreparedStatement(ADD_TEACHER_QUERY);
         preparedStatement.setString(1, teacher.getFirstName());
         preparedStatement.setString(2, teacher.getLastName());
-        preparedStatement.setDate(3, new Date(teacher.getDob().getTime()));
+        preparedStatement.setDate(3, teacher.getDob());
         preparedStatement.setString(4, teacher.getNationalCode());
         preparedStatement.executeUpdate();
     }
@@ -59,7 +59,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
         PreparedStatement preparedStatement = Database.getPreparedStatement(UPDATE_TEACHER_QUERY);
         preparedStatement.setString(1, teacher.getFirstName());
         preparedStatement.setString(2, teacher.getLastName());
-        preparedStatement.setDate(3, new Date(teacher.getDob().getTime()));
+        preparedStatement.setDate(3, teacher.getDob());
         preparedStatement.setString(4, teacher.getNationalCode());
         preparedStatement.setLong(5, teacher.getTeacherId());
         preparedStatement.executeUpdate();
